@@ -1,0 +1,21 @@
+
+.player-turn-right{
+	transform:scaleY(-1) rotate(10deg)
+}
+.player-turn-left{
+	transform:scaleY(-1) rotate(-10deg)
+}
+.player-no-turn{
+	transform:scaleY(-1)
+}
+.player{
+	transition: transform 0.2s ease-out;
+	background: url('/assets/player.png') 0px 0px no-repeat;
+	animation: throttle 0.4s steps(3) linear infinite;
+}
+
+@keyframes throttle {
+	0%   {  background-position: 0px 0px; }
+	50%  {  background-position: -30px 0px; }
+	100% {  background-position: 0px 0px; }
+}

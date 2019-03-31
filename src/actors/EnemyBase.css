@@ -1,0 +1,11 @@
+.enemy1{
+	transition: transform 0.2s ease-out;
+	background: url('/assets/enemy1.png') 0px 0px no-repeat;
+	animation: throttle 0.4s steps(3) linear infinite;
+}
+
+@keyframes throttle {
+	0%   {  background-position: 0px 0px; }
+	50%  {  background-position: -30px 0px; }
+	100% {  background-position: 0px 0px; }
+}

@@ -1,12 +1,21 @@
 import React, { Component, ReactNode } from 'react';
+import CollisionUtils from './CollisionUtils';
+import { GameUtils } from './GameUtils';
 
 class Stage extends Component {
+
+	public static Instance:any;
 
 	public state = {
 		input: {
 			axis: { x: 0, y: 0 },
 			fireDown: false
-		}
+		},
+		gameProperties:{
+			width:0,
+			height:0
+		},
+		children:[] as any[]
 	}
 	public sprites: any[] = []
 
@@ -16,78 +25,116 @@ class Stage extends Component {
 	private interval:number;
 	private delta:number;
 	private frameCount:number;
-
+	private updateCallback:any;
 
 	constructor(public props: any) {
 		super(props);
-		
 		this.fps = 30;
 		this.now = Date.now();
 		this.then = Date.now();
 		this.interval = 1000/this.fps;
 		this.delta = 0;
 		this.frameCount = 0;
+		this.updateCallback = props.onUpdate;
+		Stage.Instance = this;
 	}
 
 	setSprite = (sprite: any) => {
+		if(sprite == null) return;
 		this.sprites.push(sprite);
 	}
+	
 
 	componentDidMount() {
+		let elm:any = document.getElementById("stage");
+		this.setState({gameProperties:{width:elm.offsetWidth, height:elm.offsetHeight}});
+		
+		React.Children.map(this.props.children, (child, i) => {
+			this.addSprite(child);
+		});
+
 		requestAnimationFrame(this.frameLoop);
 	}
-
-		
+	addSprite = (sprite:any) =>{
+		const elementKey = "sprite-"+GameUtils.GenerateUID();
+		const newElm = React.cloneElement(sprite, {
+			key: elementKey,
+			ref: this.setSprite,
+			input:this.state.input,
+			pKey:elementKey
+		})
+		this.setState((currentState:any)=>{
+			const children = currentState.children.concat(newElm);
+			return {
+				input:currentState.input,
+				gameProperties:currentState.gameProperties,
+				children:children,
+			}
+		})
+	}
+	removeSprite = (sprite:any) => {
+		const spriteKey = sprite.props.pKey;
+		this.sprites = this.sprites.filter(item=>item.props.pKey !== spriteKey);
+		const newList = this.state.children.filter((item:any)=>item.props.pKey !== spriteKey);
+		this.setState({ children:newList });
+	}	
 	
 	frameLoop = () => {
-	
+		
+		// if(this.frameCount < 3){
+		// 	requestAnimationFrame(this.frameLoop);
+		// }
 		requestAnimationFrame(this.frameLoop);
 	
 		this.now = Date.now();
 		this.delta = this.now - this.then;
 		 
 		if (this.delta > this.interval) {
-			// update time stuffs
-			 
-			// Just `then = now` is not enough.
-			// Lets say we set fps at 10 which means
-			// each frame must take 100ms
-			// Now frame executes in 16ms (60fps) so
-			// the loop iterates 7 times (16*7 = 112ms) until
-			// delta > interval === true
-			// Eventually this lowers down the FPS as
-			// 112*10 = 1120ms (NOT 1000ms).
-			// So we have to get rid of that extra 12ms
-			// by subtracting delta (112) % interval (100).
-			// Hope that makes sense.
-			 
 			this.then = this.now - (this.delta % this.interval);
 
-			// ... Code for Drawing the Frame ...
 			this.frameCount++;
 			this.setState({
-				frameCount:this.frameCount
+				frameCount:this.frameCount 
 			})
 
 			this.sprites.map((item: any) => {
-				item.update(this.state,this.delta)
+				if(!item) return;
+
+				if(!item.props.active){
+					this.handleColision(item);
+				}
+
+				item.update(this.state);
 			});
+			
+			if(this.updateCallback) this.updateCallback(this.frameCount);
 		}
 
 	}
 
+	handleColision(currentSprite:any){
+		this.sprites.map((sprite)=>{
+			if(sprite !== currentSprite){
+				if(!sprite || sprite.props.startAt && sprite.props.startAt > this.frameCount) return;
+				if(CollisionUtils.collide(currentSprite, sprite)){
+					if(currentSprite.collidesWith) currentSprite.collidesWith(sprite);
+				}
+			}
 
+		})
+	}
 
 
 	mouseMove(event: any) {
 		let elm:any = document.getElementById("stage");
 		let coords = this.getRelativeCoordinates(event, elm);
+	//	console.log("Where is my mouse??", coords);
 		//console.log("Coordinates", coords, elm.offsetWidth, elm.offsetHeight);
 
-		coords = {
-			x:(coords.x / elm.offsetWidth)*100,
-			y:(coords.y / elm.offsetHeight)*100,
-		}
+		// coords = {
+		// 	x:(coords.x / elm.offsetWidth)*100,
+		// 	y:(coords.y / elm.offsetHeight)*100,
+		// }
 
 		this.setState({
 			input: { axis: { x: coords.x, y: coords.y } }
@@ -145,20 +192,13 @@ class Stage extends Component {
 			width: '100%',
 			height: '100%',
 			display: 'block',
-			overflow:'hidden'
+			overflow:'hidden',
+			zIndex:2
 		}
-		const wrappedChildren: any[] = [];
-		React.Children.map(this.props.children, (child, i) => {
-			if (!child) return;
-			let spriteName = "sprite-" + i;
-			wrappedChildren.push(React.cloneElement(child, {
-				key: spriteName,
-				ref: this.setSprite
-			}));
-		});
+
 		return (
 			<div id="stage" onMouseMove={this.mouseMove.bind(this)} onMouseDown={this.mouseDown.bind(this)} onMouseUp={this.mouseUp.bind(this)} className="game" style={style}>
-				{wrappedChildren}
+				{this.state.children}
 			</div>
 		)
 	}

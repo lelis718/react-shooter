@@ -6,10 +6,10 @@ import Level1 from './levels/Level1';
 class App extends Component {
   render() {
 	  const style={
-		  marginLeft:200,
-		  marginTop:200,
-		  width:400,
-		  height:400
+		  marginLeft:0,
+		  marginTop:0,
+		  width:'100vw',
+		  height:'100vh'
 	  }
     return (
 

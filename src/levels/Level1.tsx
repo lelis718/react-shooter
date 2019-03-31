@@ -6,21 +6,31 @@ import Enemy1 from '../actors/Enemy1';
 
 
 class Level1 extends Component {
-	
-	render(){
-		return <Stage>
-			<Player></Player>
-			<Enemy1 startAt={10}></Enemy1>
-			<Enemy1 startAt={40}></Enemy1>
-			<Enemy1 startAt={100}></Enemy1>
-			<Enemy1 startAt={200}></Enemy1>
-			<Enemy1 startAt={300}></Enemy1>
-			<Enemy1 startAt={400}></Enemy1>
-			<Enemy1 startAt={410}></Enemy1>
-			<Enemy1 startAt={420}></Enemy1>
-			<Enemy1 startAt={430}></Enemy1>
-			<Enemy1 startAt={440}></Enemy1>
-			</Stage>
+
+
+	private stage: any = null;
+
+	constructor(props: any) {
+		super(props);
+	}
+
+	update(frameCount: number) {
+		if (!this.stage) return;
+		if (frameCount % 60 == 0) {
+
+			this.stage.addSprite(<Enemy1 name="Enemy" position={{ x: 10, y: -50 }}></Enemy1>);
+		}
+		
+	}
+	componentDidMount(){
+		this.stage = this.refs.stage;
+		//this.update(0);
+	}
+
+	render() {
+		return <Stage ref="stage" onUpdate={this.update.bind(this)} >
+			<Player name="Player" position={{ x: 200, y: 350 }}></Player>
+		</Stage>
 	}
 }
 

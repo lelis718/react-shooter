@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './Game.css';
 
 class Game extends Component {
 
@@ -8,8 +9,8 @@ class Game extends Component {
 	render() {
 		const style={
 			position:'relative' as 'relative',
-			width:this.props.width,
-			height:this.props.height,
+			width:'100%',
+			height:'100%',
 			padding:0,
 			display:'block'
 		}

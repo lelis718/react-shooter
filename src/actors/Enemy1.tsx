@@ -1,43 +1,47 @@
 import React, { Component, ReactNode } from 'react';
+import Sprite from '../base/Sprite';
+import EnemyBase from './EnemyBase';
+import Stage from '../base/Stage';
+
 
 
 class Enemy1 extends Component {
+	
 
-	/**
-	 *
-	 */
+	public state = {
+		active:true,
+		position: {x:0,y:0},
+		dimensions:{width:30,height:30},
+		vel:{x:0,y:5}
+	};
+	private base:any;
+
 	constructor(public props:any) {
 		super(props);
-		this.startingFrame = this.props.startAt;
-	}
-
-	public state ={
-		x:Math.random()*100,y:-10
-	};
-	public velY = 1;
-	public startingFrame = 1;
-
-	public update(gameState:any,deltaTime:number) {
-		if(this.startingFrame <= gameState.frameCount){
-			let y = this.state.y + this.velY;
-			let x = this.state.x;
-			if(y > 110){
-				y = -10;
-				x = Math.random()*100;
-			}
-			this.setState({x:x, y:y});
+		if(this.props.position){
+			this.state.position = this.props.position;
 		}
-
 	}
+	componentDidMount(){
+		this.base = this.refs.base;
+	}
+	
+	update = (gameState:any) => { this.base.update(gameState) }
+	
+	move(gameState:any){
+		this.setState({
+			position:{
+				x:this.state.position.x+this.state.vel.x,
+				y:this.state.position.y+this.state.vel.y
+			}
+		});
+		if(this.state.position.y > gameState.gameProperties.height+100){
+			Stage.Instance.removeSprite(this);
+		}
+	}
+
 	render(){
-		const style = {
-			position:'absolute' as 'absolute',
-			width:'10px',height:'10px',
-			top:`calc(${this.state.y}% - 5px)`, 
-			left:`calc(${this.state.x}% - 5px)`, 
-			backgroundColor:'purple'
-		};
-		return <div style={style} ></div>
+		return <EnemyBase ref="base" update={this.update.bind(this)} moveEnemy={this.move.bind(this)} dimensions={this.state.dimensions} position={this.state.position} className="enemy1"></EnemyBase>
 	}
 }
 
