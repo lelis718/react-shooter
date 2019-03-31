@@ -18,7 +18,7 @@ class Level1 extends Component {
 		if (!this.stage) return;
 		if (frameCount % 60 == 0) {
 
-			this.stage.addSprite(<Enemy1 name="Enemy" position={{ x: 10, y: -50 }}></Enemy1>);
+			this.stage.addSprite(<Enemy1 name="Enemy" position={{ x: Math.random(), y: -50 }}></Enemy1>);
 		}
 		
 	}
