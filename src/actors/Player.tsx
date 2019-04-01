@@ -4,6 +4,7 @@ import VectorUtils from '../base/VectorUtils';
 import './Player.css';
 import PlayerBullet from './PlayerBullet';
 import Stage from '../base/Stage';
+import App from '../App';
 
 class Player extends Component {
 
@@ -12,15 +13,15 @@ class Player extends Component {
 		position: {x:0,y:0},
 		dimensions:{width:30,height:30},
 		velocity: {x:0,y:0},
-		maxSpeed:10,
+		maxSpeed:30,
 		turnDirection:"none",
 	};
 
 	public update(gameState:any) {
-
-		let dir = VectorUtils.subtract(gameState.input.axis,this.state.position);
+		let axis = {x:gameState.input.axis.x, y:gameState.input.axis.y-50}; 
+		let dir = VectorUtils.subtract(axis,this.state.position);
 		let distance = VectorUtils.magnitude(dir);
-		const arriveDistance = 30;
+		const arriveDistance = 50;
 
 		let speed = 0;
 		if(distance < arriveDistance){
@@ -31,18 +32,16 @@ class Player extends Component {
 		let desired = VectorUtils.normalize(dir, speed);
 		let steer = VectorUtils.subtract(desired, this.state.velocity);
 
-
-
-		this.state.velocity = VectorUtils.normalize(VectorUtils.add(steer, this.state.velocity), speed);
-		let newPosition = VectorUtils.add(this.state.position, this.state.velocity);
+		let newVelocity = VectorUtils.normalize(VectorUtils.add(steer, this.state.velocity), speed);
+		let newPosition = VectorUtils.add(this.state.position, newVelocity);
 		
 
 		//Change sprites
 		let turnTreshold = 10;
-		if(newPosition.x > gameState.input.axis.x+turnTreshold){
+		if(newPosition.x > axis.x+turnTreshold){
 			//going right
 			this.state.turnDirection = "player-turn-right";
-		}else if(newPosition.x < gameState.input.axis.x-turnTreshold){
+		}else if(newPosition.x < axis.x-turnTreshold){
 			//going left
 			this.state.turnDirection = "player-turn-left";
 		} else{
@@ -56,6 +55,7 @@ class Player extends Component {
 
 		
 		this.setState({
+			velocity:newVelocity,
 			position:newPosition
 		})
 	}
@@ -63,6 +63,7 @@ class Player extends Component {
 		if(sprite.props.name == "Enemy"){
 			Stage.Instance.removeSprite(sprite);
 			Stage.Instance.removeSprite(this);
+			App.Instance.gameRestart();
 		}		
 	}
 	constructor(public props:any) {

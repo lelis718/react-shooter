@@ -16,9 +16,10 @@ class Level1 extends Component {
 
 	update(frameCount: number) {
 		if (!this.stage) return;
-		if (frameCount % 60 == 0) {
+		let rand = 20+(Math.random()*10);
+		if (frameCount % parseInt(rand.toString(),0) == 0) {
 
-			this.stage.addSprite(<Enemy1 name="Enemy" position={{ x: Math.random(), y: -50 }}></Enemy1>);
+			this.stage.addSprite(<Enemy1 name="Enemy" position={{ x: Math.random()*this.stage.state.gameProperties.width, y: -50 }}></Enemy1>);
 		}
 		
 	}
@@ -28,6 +29,7 @@ class Level1 extends Component {
 	}
 
 	render() {
+		
 		return <Stage ref="stage" onUpdate={this.update.bind(this)} >
 			<Player name="Player" position={{ x: 200, y: 350 }}></Player>
 		</Stage>
