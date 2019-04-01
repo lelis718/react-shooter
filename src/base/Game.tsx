@@ -15,7 +15,7 @@ class Game extends Component {
 			display:'block'
 		}
 	return (
-			<div id="game" className="game" style={style}>
+			<div id="game" className="game-shooter" style={style}>
 				{this.props.children}
 			</div>
 		)

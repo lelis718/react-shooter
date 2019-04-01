@@ -2,11 +2,13 @@ import React, { Component, ReactNode } from 'react';
 import CollisionUtils from './CollisionUtils';
 import { GameUtils } from './GameUtils';
 
+
 class Stage extends Component {
 
 	public static Instance:any;
 
 	public state = {
+		looping:false,
 		input: {
 			axis: { x: 0, y: 0 },
 			fireDown: false
@@ -52,8 +54,12 @@ class Stage extends Component {
 		React.Children.map(this.props.children, (child, i) => {
 			this.addSprite(child);
 		});
-
+		this.setState({looping:true});
 		requestAnimationFrame(this.frameLoop);
+	}
+	componentWillUnmount()
+	{
+		this.setState({looping:false});
 	}
 	addSprite = (sprite:any) =>{
 		const elementKey = "sprite-"+GameUtils.GenerateUID();
@@ -84,7 +90,9 @@ class Stage extends Component {
 		// if(this.frameCount < 3){
 		// 	requestAnimationFrame(this.frameLoop);
 		// }
-		requestAnimationFrame(this.frameLoop);
+		if(this.state.looping){
+			requestAnimationFrame(this.frameLoop);
+		}
 	
 		this.now = Date.now();
 		this.delta = this.now - this.then;
@@ -124,26 +132,40 @@ class Stage extends Component {
 		})
 	}
 
+	touchMove(event: any){
+		let touch = event.touches[0];
+		let position = {x:touch.pageX, y:touch.pageY};
 
-	mouseMove(event: any) {
 		let elm:any = document.getElementById("stage");
-		let coords = this.getRelativeCoordinates(event, elm);
-	//	console.log("Where is my mouse??", coords);
-		//console.log("Coordinates", coords, elm.offsetWidth, elm.offsetHeight);
-
-		// coords = {
-		// 	x:(coords.x / elm.offsetWidth)*100,
-		// 	y:(coords.y / elm.offsetHeight)*100,
-		// }
+		let coords = this.getRelativeCoordinates(position, elm);
 
 		this.setState({
-			input: { axis: { x: coords.x, y: coords.y } }
+			input: { 
+				axis: { x: coords.x, y: coords.y },
+				fireDown:this.state.input.fireDown
+			}
 		});
+
+	}
+	mouseMove(event: any) {
+		
+		let position = {x:event.pageX, y:event.pageY};
+
+		let elm:any = document.getElementById("stage");
+		let coords = this.getRelativeCoordinates(position, elm);
+
+		this.setState({
+			input: { 
+				axis: { x: coords.x, y: coords.y },
+				fireDown:this.state.input.fireDown
+			}
+		});
+
 	}
 	mouseDown(event: any) {
 		this.setState({
 			input: { 
-				axis: { x: this.state.input.axis.x, y: this.state.input.axis.y },
+				axis: this.state.input.axis,
 				fireDown: true 
 			}
 		});
@@ -151,19 +173,15 @@ class Stage extends Component {
 	mouseUp(event: any) {
 		this.setState({
 			input: { 
-				axis: { x: this.state.input.axis.x, y: this.state.input.axis.y },
+				axis: this.state.input.axis,
 				fireDown: false 
 			}
 		});
 	}
 
 
-	getRelativeCoordinates (event:any, element:any){
+	getRelativeCoordinates (position:any, element:any){
 
-		const position = {
-		  x: event.pageX,
-		  y: event.pageY
-		};
 	  
 		const offset = {
 		  left: element.offsetLeft,
@@ -197,7 +215,14 @@ class Stage extends Component {
 		}
 
 		return (
-			<div id="stage" onMouseMove={this.mouseMove.bind(this)} onMouseDown={this.mouseDown.bind(this)} onMouseUp={this.mouseUp.bind(this)} className="game" style={style}>
+			<div id="stage" 
+				onTouchMove={this.touchMove.bind(this)}
+				onTouchStart={this.mouseDown.bind(this)}
+				onTouchEnd={this.mouseUp.bind(this)} 
+				onMouseMove={this.mouseMove.bind(this)}
+				onMouseDown={this.mouseDown.bind(this)}
+				onMouseUp={this.mouseUp.bind(this)} 
+				className="game" style={style}>
 				{this.state.children}
 			</div>
 		)

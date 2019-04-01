@@ -1,8 +1,8 @@
-.game{
+.game-shooter{
 	position: relative;
 	overflow: hidden;
 }
-.game:after {
+.game-shooter:after {
 	content: "";
 	position: absolute;
 	z-index: 0;
@@ -24,7 +24,7 @@
 
 	animation: rotateblackhole 1000s linear infinite; */
 }
-.game:before {
+.game-shooter:before {
 	content: "";
 	position: absolute;
 	z-index: -1;
@@ -61,7 +61,3 @@ body {
 		background-position:0 100%;
 	}
 }
-
-/* .game::before{
-
-} */
