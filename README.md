@@ -1,3 +1,7 @@
+# React Shooter 
+Some little game using react.<br>
+Special thanks to [Kenney Assets](https://www.kenney.nl/assets)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
