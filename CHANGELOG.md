@@ -2,6 +2,7 @@ v1.1
 =====
 Evolutions
 -----------
+Share Thumbnail and details<br>
 Rocket Enemy<br>
 Changed space backgrounds<br>
 Explosions<br>
