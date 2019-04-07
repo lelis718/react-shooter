@@ -5,6 +5,8 @@ import './Player.css';
 import PlayerBullet from './PlayerBullet';
 import Stage from '../base/Stage';
 import App from '../App';
+import Explosion from './Explosion';
+import { GameGlobals } from '../helpers/GameGlobals';
 
 class Player extends Component {
 
@@ -20,8 +22,8 @@ class Player extends Component {
 	public componentDidMount() {
 		this.setState({
 			position : {
-				x: Stage.Instance.state.gameProperties.width / 2,
-				y: Stage.Instance.state.gameProperties.height - 50
+				x: GameGlobals.Stage.state.gameProperties.width / 2,
+				y: GameGlobals.Stage.state.gameProperties.height - 50
 			}
 		});
 	}
@@ -37,7 +39,7 @@ class Player extends Component {
 
 	public shoot(gameState: any) {
 		if (gameState.frameCount % 15 == 0) {
-			Stage.Instance.addSprite(<PlayerBullet name="Shoot" position={{ x: this.state.position.x, y: this.state.position.y - 15 }}></PlayerBullet>);
+			GameGlobals.Stage.addSprite(<PlayerBullet name="Shoot" position={{ x: this.state.position.x, y: this.state.position.y - 15 }}></PlayerBullet>);
 		}
 	}
 	public animate(gameState: any) {
@@ -77,12 +79,15 @@ class Player extends Component {
 		});
 
 	}
+	restart(){
+		App.Instance.gameRestart();
+	}
 
 	public collidesWith(sprite: any) {
 		if (sprite.props.name == "Enemy") {
-			Stage.Instance.removeSprite(sprite);
-			Stage.Instance.removeSprite(this);
-			App.Instance.gameRestart();
+			GameGlobals.Stage.addSprite(<Explosion name="Kaboom" position={this.state.position} onEnd={this.restart.bind(this)}></Explosion>);
+			GameGlobals.Stage.removeSprite(sprite);
+			GameGlobals.Stage.removeSprite(this);
 		}
 	}
 	constructor(public props: any) {
@@ -90,6 +95,7 @@ class Player extends Component {
 		if (this.props.position) {
 			this.state.position = this.props.position;
 		}
+		GameGlobals.Player = this;
 	}
 
 	render() {

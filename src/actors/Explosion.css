@@ -1,0 +1,10 @@
+.explosion{
+	transition: transform 0.2s ease-out;
+	background: url('/assets/explosion.png') 0px 0px no-repeat;
+	animation: boom 0.4s steps(5) infinite;
+}
+
+@keyframes boom {
+	from {  background-position: 0px 0px; }
+	to {  background-position: -150px 0px; }
+}

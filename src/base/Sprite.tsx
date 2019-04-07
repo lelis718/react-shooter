@@ -19,8 +19,10 @@ class Sprite extends Component {
 			zIndex:2
 			//border:'solid 1px green' //debug
 		};
+
+		let appliedStyle = Object.assign(style, this.props.style);
 		
-		return <div style={style} className={this.props.className}  />
+		return <div style={appliedStyle} className={this.props.className}  />
 	}
 
 }
