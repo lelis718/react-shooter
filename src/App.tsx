@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './App.css';
 import Game from './base/Game';
 import Level1 from './levels/Level1';
+import { GameGlobals } from './helpers/GameGlobals';
+import Score from './actors/Score';
 
 class App extends Component {
 
@@ -26,16 +28,24 @@ class App extends Component {
 			marginLeft: 0,
 			marginTop: 0,
 			width: '100vw',
-			height: '100vh'
+			height: 'calc(100vh - 56px)'
 		}
 
 		let game;
-		if(this.state.gameStarted){
-			game = <Level1></Level1>;
-		}
 		let start;
+		let scorePosition="top";
+
+		if(this.state.gameStarted){
+			scorePosition = "top";
+			game = <Level1></Level1>;
+		} else if(GameGlobals.ScoreVal>0){
+			scorePosition = "center";
+		} else{
+			scorePosition = "hidden";
+		}
+
 		if(!this.state.gameStarted){
-			start = <button name="Start" className={"startButton"} onClick={this.gameStart.bind(this)}>Start</button>;
+			start = <button name="Start" className={"startButton"} onClick={this.gameStart.bind(this)}>Start</button>
 		}
 
 		return (
@@ -44,6 +54,7 @@ class App extends Component {
 					{game}
 				</Game>
 				{start}
+				<Score position={scorePosition}></Score>
 			</div>
 		);
 	}

@@ -15,7 +15,7 @@ class EnemyBase extends Component {
 	
 
 	render(){
-		return <Sprite name="Enemy" dimensions={this.props.dimensions} position={this.props.position} className={this.props.className} ></Sprite>
+		return <Sprite name="Enemy" dimensions={this.props.dimensions} position={this.props.position} className={this.props.className} style={this.props.style} ></Sprite>
 	}
 }
 

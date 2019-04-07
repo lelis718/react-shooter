@@ -2,6 +2,7 @@ import React, { Component, ReactNode } from 'react';
 import Sprite from '../base/Sprite';
 import EnemyBase from './EnemyBase';
 import Stage from '../base/Stage';
+import { GameGlobals } from '../helpers/GameGlobals';
 
 
 
@@ -12,7 +13,7 @@ class Enemy1 extends Component {
 		active:true,
 		position: {x:0,y:0},
 		dimensions:{width:30,height:30},
-		vel:{x:0,y:5}
+		vel:{x:0,y:2}
 	};
 	private base:any;
 
@@ -36,7 +37,7 @@ class Enemy1 extends Component {
 			}
 		});
 		if(this.state.position.y > gameState.gameProperties.height+100){
-			Stage.Instance.removeSprite(this);
+			GameGlobals.Stage.removeSprite(this);
 		}
 	}
 

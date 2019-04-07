@@ -1,0 +1,16 @@
+.score{
+	color:yellow;
+	font-weight:bold;
+	font-size:2em;
+	position: absolute;
+	top:0;
+	right:10px;
+	text-align: right;
+}
+.score.hidden{display:none;}
+.score.center{
+    width: 100vw;
+    top: 55vh;
+    left: 0;
+    text-align: center;
+}

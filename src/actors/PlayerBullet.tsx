@@ -3,6 +3,8 @@ import Sprite from '../base/Sprite';
 import VectorUtils from '../base/VectorUtils';
 import './PlayerBullet.css';
 import Stage from '../base/Stage';
+import Explosion from './Explosion';
+import { GameGlobals } from '../helpers/GameGlobals';
 
 class PlayerBullet extends Component {
 
@@ -24,14 +26,16 @@ class PlayerBullet extends Component {
 		})
 
 		if(this.state.position.y < -50){
-			Stage.Instance.removeSprite(this);
+			GameGlobals.Stage.removeSprite(this);
 		}
 	}
 	public collidesWith(sprite:any){
-		console.log("Coliding with", sprite.props.name);
 		if(sprite.props.name == "Enemy"){
-			Stage.Instance.removeSprite(sprite);
-			Stage.Instance.removeSprite(this);
+			GameGlobals.Stage.addSprite(<Explosion name="Kaboom" active={false} position={this.state.position}></Explosion>);
+			GameGlobals.Stage.removeSprite(sprite);
+			GameGlobals.Stage.removeSprite(this);
+			
+			GameGlobals.Score.incrementScore(10);
 		}
 		//console.log("I am coliding with", sprite);
 	}

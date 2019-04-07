@@ -1,6 +1,7 @@
 import React, { Component, ReactNode } from 'react';
 import CollisionUtils from './CollisionUtils';
 import { GameUtils } from './GameUtils';
+import { GameGlobals } from '../helpers/GameGlobals';
 
 
 class Stage extends Component {
@@ -31,14 +32,14 @@ class Stage extends Component {
 
 	constructor(public props: any) {
 		super(props);
-		this.fps = 30;
+		this.fps = 60;
 		this.now = Date.now();
 		this.then = Date.now();
 		this.interval = 1000/this.fps;
 		this.delta = 0;
 		this.frameCount = 0;
 		this.updateCallback = props.onUpdate;
-		Stage.Instance = this;
+		GameGlobals.Stage = this;
 	}
 
 	setSprite = (sprite: any) => {
@@ -84,6 +85,7 @@ class Stage extends Component {
 		const newList = this.state.children.filter((item:any)=>item.props.pKey !== spriteKey);
 		this.setState({ children:newList });
 	}	
+
 	
 	frameLoop = () => {
 		
@@ -101,6 +103,11 @@ class Stage extends Component {
 			this.then = this.now - (this.delta % this.interval);
 
 			this.frameCount++;
+
+			if(this.frameCount > 100000){
+				this.frameCount = 0;
+			} 
+
 			this.setState({
 				frameCount:this.frameCount 
 			})
@@ -108,7 +115,7 @@ class Stage extends Component {
 			this.sprites.map((item: any) => {
 				if(!item) return;
 
-				if(!item.props.active){
+				if(item.state.active){
 					this.handleColision(item);
 				}
 

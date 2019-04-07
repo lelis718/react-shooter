@@ -3,6 +3,11 @@
 	background: url('/assets/enemy1.png') 0px 0px no-repeat;
 	animation: enemyThrottle 0.2s steps(2) infinite;
 }
+.enemy2{
+	transition: transform 0.2s ease-out;
+	background: url('/assets/rocket.png') 0px 0px no-repeat;
+	animation: enemyThrottle 0.2s steps(2) infinite;
+}
 
 @keyframes enemyThrottle {
 	0%   {  background-position: 0px 0px; }
